@@ -1,0 +1,122 @@
+{
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-02",
+    "platforms": {
+      "netmindAI": {
+        "performanceMetrics": {
+          "computeEfficiency": {
+            "score": 85,
+            "benchmarks": {
+              "inferenceTime": "45ms",
+              "throughput": "1200 requests/second",
+              "latency": "95ms"
+            }
+          },
+          "resourceUtilization": {
+            "cpu": {
+              "average": 75,
+              "peak": 90
+            },
+            "memory": {
+              "average": 65,
+              "peak": 85
+            },
+            "gpu": {
+              "average": 80,
+              "peak": 95
+            }
+          },
+          "costMetrics": {
+            "hourlyRate": 1.25,
+            "monthlyAverage": 900,
+            "savingsOpportunities": ["spot instances", "reserved capacity"]
+          }
+        }
+      },
+      "akashNetwork": {
+        "performanceMetrics": {
+          "computeEfficiency": {
+            "score": 88,
+            "benchmarks": {
+              "inferenceTime": "42ms",
+              "throughput": "1300 requests/second",
+              "latency": "88ms"
+            }
+          },
+          "resourceUtilization": {
+            "cpu": {
+              "average": 70,
+              "peak": 88
+            },
+            "memory": {
+              "average": 60,
+              "peak": 82
+            },
+            "gpu": {
+              "average": 85,
+              "peak": 98
+            }
+          },
+          "costMetrics": {
+            "hourlyRate": 0.95,
+            "monthlyAverage": 685,
+            "savingsOpportunities": ["deployment optimization", "resource scheduling"]
+          }
+        }
+      }
+    },
+    "optimizationPatterns": {
+      "performance": [
+        {
+          "pattern": "high_latency",
+          "threshold": 100,
+          "recommendations": [
+            {
+              "platform": "nosana",
+              "action": "Implement local caching",
+              "expectedImprovement": "25-30%"
+            },
+            {
+              "platform": "render",
+              "action": "Upgrade to premium tier",
+              "expectedImprovement": "40-45%"
+            }
+          ]
+        },
+        {
+          "pattern": "memory_usage",
+          "threshold": 85,
+          "recommendations": [
+            {
+              "platform": "render",
+              "action": "Adjust RAM allocation",
+              "expectedImprovement": "20-25%"
+            },
+            {
+              "platform": "akashNetwork",
+              "action": "Scale pod resources",
+              "expectedImprovement": "30-35%"
+            }
+          ]
+        }
+      ],
+      "cost": [
+        {
+          "pattern": "high_billing",
+          "threshold": "budget_exceeded",
+          "recommendations": [
+            {
+              "platform": "akashNetwork",
+              "action": "Implement spot instances",
+              "expectedSavings": "30-40%"
+            },
+            {
+              "platform": "render",
+              "action": "Use scheduled scaling",
+              "expectedSavings": "25-35%"
+            }
+          ]
+        }
+      ]
+    }
+  }

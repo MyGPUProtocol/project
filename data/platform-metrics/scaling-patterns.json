@@ -1,0 +1,169 @@
+{
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-02",
+    "scalingPatterns": {
+      "horizontal": {
+        "description": "Adding more instances or nodes",
+        "platforms": {
+          "netmindAI": {
+            "efficiency": 0.85,
+            "maxNodes": 100,
+            "setupTime": "5min",
+            "costImpact": "linear",
+            "bestPractices": [
+              "Use auto-scaling groups",
+              "Implement load balancing",
+              "Monitor node health"
+            ]
+          },
+          "akashNetwork": {
+            "efficiency": 0.90,
+            "maxNodes": 500,
+            "setupTime": "3min",
+            "costImpact": "sublinear",
+            "bestPractices": [
+              "Leverage Kubernetes native scaling",
+              "Use spot instances",
+              "Implement proper pod distribution"
+            ]
+          }
+        }
+      },
+      "vertical": {
+        "description": "Increasing resources for existing instances",
+        "platforms": {
+          "netmindAI": {
+            "efficiency": 0.80,
+            "maxUpgrade": "4x",
+            "downtime": "required",
+            "costImpact": "exponential",
+            "bestPractices": [
+              "Schedule during low-traffic periods",
+              "Backup before scaling",
+              "Test with smaller increments"
+            ]
+          },
+          "akashNetwork": {
+            "efficiency": 0.85,
+            "maxUpgrade": "8x",
+            "downtime": "optional",
+            "costImpact": "linear",
+            "bestPractices": [
+              "Use resource quotas",
+              "Monitor resource utilization",
+              "Implement graceful degradation"
+            ]
+          }
+        }
+      },
+      "automatic": {
+        "description": "Dynamic scaling based on metrics",
+        "platforms": {
+          "netmindAI": {
+            "metrics": [
+              "CPU utilization",
+              "Memory usage",
+              "Request count"
+            ],
+            "responseTime": "2min",
+            "accuracy": 0.90,
+            "minimumNodes": 1
+          },
+          "akashNetwork": {
+            "metrics": [
+              "CPU utilization",
+              "Memory usage",
+              "Network throughput",
+              "Custom metrics"
+            ],
+            "responseTime": "1min",
+            "accuracy": 0.95,
+            "minimumNodes": 2
+          }
+        }
+      },
+      "predictive": {
+        "description": "ML-based predictive scaling",
+        "platforms": {
+          "netmindAI": {
+            "predictionWindow": "1h",
+            "accuracy": 0.85,
+            "adaptationSpeed": "medium",
+            "metrics": [
+              "Historical usage patterns",
+              "Time-based patterns",
+              "Event correlation"
+            ]
+          },
+          "akashNetwork": {
+            "predictionWindow": "2h",
+            "accuracy": 0.88,
+            "adaptationSpeed": "fast",
+            "metrics": [
+              "Historical usage patterns",
+              "Time-based patterns",
+              "Event correlation",
+              "External factors"
+            ]
+          }
+        }
+      },
+      "costOptimization": {
+        "strategies": {
+          "spotInstances": {
+            "savings": "60-80%",
+            "reliability": 0.95,
+            "bestFor": [
+              "Batch processing",
+              "Testing environments",
+              "Stateless applications"
+            ]
+          },
+          "reservedCapacity": {
+            "savings": "40-60%",
+            "commitmentPeriod": "1-3 years",
+            "bestFor": [
+              "Production environments",
+              "Predictable workloads",
+              "Long-term projects"
+            ]
+          },
+          "autoScaling": {
+            "savings": "20-40%",
+            "implementation": "medium",
+            "bestFor": [
+              "Variable workloads",
+              "Web applications",
+              "Microservices"
+            ]
+          }
+        }
+      },
+      "commonIssues": {
+        "scalingLag": {
+          "description": "Delay between trigger and execution",
+          "solutions": [
+            "Implement predictive scaling",
+            "Adjust threshold sensitivity",
+            "Use warm pools"
+          ]
+        },
+        "costSpikes": {
+          "description": "Unexpected scaling costs",
+          "solutions": [
+            "Set scaling limits",
+            "Implement gradual scaling",
+            "Use cost allocation tags"
+          ]
+        },
+        "performanceImpact": {
+          "description": "Performance degradation during scaling",
+          "solutions": [
+            "Implement circuit breakers",
+            "Use connection pooling",
+            "Optimize database queries"
+          ]
+        }
+      }
+    }
+  }

@@ -1,0 +1,162 @@
+{
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-02",
+    "platforms": {
+      "netmindAI": {
+        "baseRates": {
+          "gpu": {
+            "T4": {
+              "hourly": 0.35,
+              "monthly": 252.00,
+              "spotDiscount": 0.70
+            },
+            "V100": {
+              "hourly": 0.90,
+              "monthly": 648.00,
+              "spotDiscount": 0.60
+            },
+            "A100": {
+              "hourly": 2.50,
+              "monthly": 1800.00,
+              "spotDiscount": 0.50
+            }
+          },
+          "memory": {
+            "perGB": {
+              "hourly": 0.006,
+              "monthly": 4.32
+            }
+          },
+          "storage": {
+            "perGB": {
+              "hourly": 0.0002,
+              "monthly": 0.144
+            }
+          }
+        },
+        "optimizationPatterns": {
+          "spotInstances": {
+            "averageSavings": 0.65,
+            "reliability": 0.95
+          },
+          "autoScaling": {
+            "averageSavings": 0.25,
+            "implementationComplexity": "low"
+          },
+          "reservedInstances": {
+            "oneYear": {
+              "discount": 0.40,
+              "upfrontRequired": true
+            },
+            "threeYear": {
+              "discount": 0.60,
+              "upfrontRequired": true
+            }
+          }
+        }
+      },
+      "akashNetwork": {
+        "baseRates": {
+          "gpu": {
+            "T4": {
+              "hourly": 0.28,
+              "monthly": 201.60,
+              "spotDiscount": 0.75
+            },
+            "V100": {
+              "hourly": 0.75,
+              "monthly": 540.00,
+              "spotDiscount": 0.65
+            },
+            "A100": {
+              "hourly": 2.00,
+              "monthly": 1440.00,
+              "spotDiscount": 0.55
+            }
+          },
+          "memory": {
+            "perGB": {
+              "hourly": 0.005,
+              "monthly": 3.60
+            }
+          },
+          "storage": {
+            "perGB": {
+              "hourly": 0.00015,
+              "monthly": 0.108
+            }
+          }
+        },
+        "optimizationPatterns": {
+          "deploymentStrategies": {
+            "kubernetes": {
+              "averageSavings": 0.30,
+              "implementationComplexity": "medium"
+            },
+            "containerization": {
+              "averageSavings": 0.20,
+              "implementationComplexity": "low"
+            }
+          },
+          "tokenEconomics": {
+            "stakingRewards": {
+              "annual": 0.12,
+              "lockupPeriod": "30d"
+            },
+            "volumeDiscounts": {
+              "tier1": {
+                "threshold": 1000,
+                "discount": 0.05
+              },
+              "tier2": {
+                "threshold": 5000,
+                "discount": 0.10
+              },
+              "tier3": {
+                "threshold": 10000,
+                "discount": 0.15
+              }
+            }
+          }
+        }
+      }
+    },
+    "optimizationStrategies": {
+      "workloadScheduling": {
+        "offPeakUsage": {
+          "potentialSavings": 0.20,
+          "implementationEffort": "low",
+          "reliability": 0.98
+        },
+        "batchProcessing": {
+          "potentialSavings": 0.15,
+          "implementationEffort": "medium",
+          "reliability": 0.95
+        }
+      },
+      "resourceAllocation": {
+        "rightSizing": {
+          "potentialSavings": 0.25,
+          "implementationEffort": "medium",
+          "reliability": 0.90
+        },
+        "autoScaling": {
+          "potentialSavings": 0.30,
+          "implementationEffort": "high",
+          "reliability": 0.85
+        }
+      }
+    },
+    "savingsCalculator": {
+      "formulae": {
+        "basicMonthly": "baseRate * hours * (1 - discount)",
+        "spotSavings": "baseRate * hours * spotDiscount",
+        "reservedSavings": "baseRate * hours * reservedDiscount - upfrontCost"
+      },
+      "recommendations": {
+        "lowUsage": ["spotInstances", "autoScaling"],
+        "mediumUsage": ["autoScaling", "rightSizing"],
+        "highUsage": ["reservedInstances", "rightSizing"]
+      }
+    }
+  }
