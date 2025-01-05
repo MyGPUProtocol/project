@@ -25,7 +25,7 @@ Your central gateway for optimizing GPU and cloud computing resources across mul
 
 3. **Access the Chatbot**
    - Navigate to `https://my-gpu.com/`
-   - Click "Start Optimization"
+   - Click "Start"
    - Follow the chatbot prompts
 
 ## 🔧 Supported Platforms
