@@ -54,7 +54,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 For support:
-1. Check our [documentation](/docs)
+1. Check our [documentation]( /docs )
 2. Use the chatbot interface
 3. Submit an issue
 
