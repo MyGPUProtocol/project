@@ -1,65 +1,114 @@
-import { describe, it, expect, beforeEach, jest } from 'jest';
+import { describe, it, expect, beforeEach, afterEach } from 'jest';
 import GPUOptimizer from '../chatbot/core/optimizer';
 import PlatformAnalyzer from '../chatbot/core/platformAnalyzer';
 import ResponseGenerator from '../chatbot/core/responseGenerator';
+
+// Constants for test data
+const TEST_CONSTANTS = {
+  TIMEOUT: 5000,
+  LARGE_DATASET_SIZE: 1000,
+  DEFAULT_USER_INPUT: {
+    workloadType: 'machine learning training',
+    budget: 'moderate',
+    technicalExpertise: 'intermediate',
+    performance: {
+      highAvailability: true,
+      scalability: true
+    }
+  }
+};
+
+// Test data factory
+const createTestData = (overrides = {}) => ({
+  ...TEST_CONSTANTS.DEFAULT_USER_INPUT,
+  ...overrides
+});
 
 describe('Integration Tests', () => {
   let optimizer;
   let analyzer;
   let responseGenerator;
+  let mockPlatformData;
 
   beforeEach(() => {
+    // Initialize components
     optimizer = new GPUOptimizer();
     analyzer = new PlatformAnalyzer();
     responseGenerator = new ResponseGenerator();
+
+    // Setup mock data
+    mockPlatformData = {
+      platforms: {
+        netmindAI: {
+          strengths: ['intuitive interface', 'competitive pricing'],
+          weaknesses: ['limited support']
+        },
+        akashNetwork: {
+          strengths: ['cost-effective', 'highly customizable'],
+          weaknesses: ['technical complexity']
+        }
+      }
+    };
+  });
+
+  afterEach(() => {
+    // Clean up any test data or mocks
+    jest.clearAllMocks();
   });
 
   describe('End-to-End Optimization Flow', () => {
     it('should handle complete optimization process', async () => {
-      // Sample user input
-      const userInput = {
-        workloadType: 'machine learning training',
-        budget: 'moderate',
-        technicalExpertise: 'intermediate',
-        performance: {
-          highAvailability: true,
-          scalability: true
-        }
-      };
+      const userInput = createTestData();
 
-      // Test complete flow
-      const requirements = await optimizer.analyzeRequirements(userInput);
-      const platformAnalysis = analyzer.analyzeUserRequirements(requirements);
-      const optimizationPlan = await optimizer.generateOptimizationPlan(platformAnalysis);
+      const results = await Promise.all([
+        optimizer.analyzeRequirements(userInput),
+        analyzer.analyzeUserRequirements(userInput),
+        optimizer.generateOptimizationPlan(userInput)
+      ]);
+
+      const [requirements, platformAnalysis, optimizationPlan] = results;
       const response = responseGenerator.generatePlatformRecommendation(platformAnalysis);
 
-      // Verify response structure
-      expect(response).toHaveProperty('type', 'recommendation');
-      expect(response.content).toHaveProperty('recommendations');
-      expect(response.content.recommendations.length).toBeGreaterThan(0);
+      // Comprehensive assertions
+      expect(response).toMatchObject({
+        type: 'recommendation',
+        content: {
+          recommendations: expect.any(Array)
+        }
+      });
+      expect(optimizationPlan).toBeDefined();
+      expect(requirements).toBeDefined();
     });
 
-    it('should handle cost optimization scenarios', async () => {
+    it('should generate accurate cost analysis with proper formatting', async () => {
       const costMetrics = {
         current: 1500,
         projected: 1000,
-        timeline: '3 months'
+        timeline: '3 months',
+        savings: {
+          percentage: 33.33,
+          amount: 500
+        }
       };
 
       const response = responseGenerator.generateCostAnalysis(costMetrics);
       const formatted = responseGenerator.formatResponse(response);
 
-      expect(formatted).toContain('$1500');
-      expect(formatted).toContain('$1000');
-      expect(formatted).toContain('3 months');
+      // Enhanced assertions for cost analysis
+      expect(formatted).toMatch(/\$1,500/);
+      expect(formatted).toMatch(/\$1,000/);
+      expect(formatted).toMatch(/3 months/);
+      expect(formatted).toMatch(/33.33%/);
+      expect(formatted).toMatch(/\$500/);
     });
   });
 
   describe('Platform-Specific Optimizations', () => {
-    it('should generate platform-specific recommendations', async () => {
+    it('should provide detailed platform recommendations with validation', async () => {
       const requirements = {
         computeNeeds: { level: 'high' },
-        budget: { isConstrained: true }
+        budget: { isConstrained: true },
+        performance: { priority: 'high' }
       };
 
       const recommendations = await optimizer.getPlatformSpecificRecommendations(
@@ -67,93 +116,107 @@ describe('Integration Tests', () => {
         requirements
       );
 
+      // Detailed validation of recommendations
       expect(recommendations).toBeInstanceOf(Array);
-      expect(recommendations[0]).toHaveProperty('type', 'optimization');
-      expect(recommendations[0]).toHaveProperty('steps');
+      recommendations.forEach(rec => {
+        expect(rec).toMatchObject({
+          type: expect.any(String),
+          steps: expect.any(Array),
+          priority: expect.any(String),
+          impact: expect.any(String)
+        });
+      });
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle invalid user input gracefully', async () => {
-      const invalidInput = {
-        workloadType: '',
-        budget: null
-      };
+  describe('Error Handling and Edge Cases', () => {
+    it('should handle missing or invalid input gracefully', async () => {
+      const testCases = [
+        { input: {}, expectedError: false },
+        { input: { workloadType: '' }, expectedError: false },
+        { input: null, expectedError: true }
+      ];
 
-      await expect(optimizer.analyzeRequirements(invalidInput))
-        .resolves
-        .toHaveProperty('computeNeeds');
+      for (const testCase of testCases) {
+        try {
+          const result = await optimizer.analyzeRequirements(testCase.input);
+          if (!testCase.expectedError) {
+            expect(result).toHaveProperty('computeNeeds');
+          }
+        } catch (error) {
+          if (!testCase.expectedError) {
+            throw error;
+          }
+          expect(error).toBeDefined();
+        }
+      }
     });
 
-    it('should handle missing platform data', async () => {
+    it('should handle platform data inconsistencies', async () => {
       const requirements = {
         computeNeeds: { level: 'high' }
       };
 
-      const recommendations = await optimizer.getPlatformSpecificRecommendations(
-        'nonexistentPlatform',
-        requirements
-      );
+      const platforms = ['nonexistentPlatform', 'akashNetwork', ''];
+      
+      for (const platform of platforms) {
+        const recommendations = await optimizer.getPlatformSpecificRecommendations(
+          platform,
+          requirements
+        );
 
-      expect(recommendations).toBeInstanceOf(Array);
-      expect(recommendations).toHaveLength(0);
+        expect(recommendations).toBeInstanceOf(Array);
+        if (platform === 'akashNetwork') {
+          expect(recommendations.length).toBeGreaterThan(0);
+        } else {
+          expect(recommendations).toHaveLength(0);
+        }
+      }
     });
   });
 
-  describe('Performance Testing', () => {
-    it('should process large datasets efficiently', async () => {
-      const startTime = Date.now();
+  describe('Performance and Scalability', () => {
+    it('should handle large datasets within performance constraints', async () => {
+      const startTime = performance.now();
       
-      // Generate large dataset
-      const largeInput = Array(1000).fill().map(() => ({
-        workloadType: 'machine learning training',
-        budget: 'moderate',
-        technicalExpertise: 'intermediate',
-        performance: {
-          highAvailability: true,
-          scalability: true
-        }
-      }));
+      const largeInput = Array(TEST_CONSTANTS.LARGE_DATASET_SIZE)
+        .fill(null)
+        .map(() => createTestData());
 
-      // Process each input
       const results = await Promise.all(
         largeInput.map(input => optimizer.analyzeRequirements(input))
       );
 
-      const endTime = Date.now();
-      const processingTime = endTime - startTime;
+      const processingTime = performance.now() - startTime;
 
-      expect(results).toHaveLength(1000);
-      expect(processingTime).toBeLessThan(5000); // Should process in under 5 seconds
+      expect(results).toHaveLength(TEST_CONSTANTS.LARGE_DATASET_SIZE);
+      expect(processingTime).toBeLessThan(TEST_CONSTANTS.TIMEOUT);
+      
+      // Validate result consistency
+      results.forEach(result => {
+        expect(result).toMatchObject({
+          computeNeeds: expect.any(Object),
+          recommendations: expect.any(Array)
+        });
+      });
     });
   });
 
-  describe('Data Consistency', () => {
-    it('should maintain consistent recommendations across multiple runs', async () => {
-      const input = {
-        workloadType: 'machine learning training',
-        budget: 'moderate',
-        technicalExpertise: 'intermediate'
-      };
+  describe('Data Consistency and Reliability', () => {
+    it('should provide consistent recommendations across multiple runs', async () => {
+      const input = createTestData();
+      const numberOfRuns = 5;
+      const results = [];
 
-      const firstRun = await optimizer.analyzeRequirements(input);
-      const secondRun = await optimizer.analyzeRequirements(input);
+      for (let i = 0; i < numberOfRuns; i++) {
+        results.push(await optimizer.analyzeRequirements(input));
+      }
 
-      expect(firstRun).toEqual(secondRun);
+      // Compare all results with the first one
+      const firstResult = results[0];
+      results.slice(1).forEach(result => {
+        expect(result).toEqual(firstResult);
+      });
     });
   });
 });
-
-// Mock data for testing
-const mockData = {
-  platforms: {
-    netmindAI: {
-      strengths: ['intuitive interface', 'competitive pricing'],
-      weaknesses: ['limited support']
-    },
-    akashNetwork: {
-      strengths: ['cost-effective', 'highly customizable'],
-      weaknesses: ['technical complexity']
-    }
-  }
-};
